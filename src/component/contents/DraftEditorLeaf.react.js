@@ -156,13 +156,17 @@ class DraftEditorLeaf extends React.Component<Props> {
       return Object.assign(map, style, mergedStyles);
     }, {});
 
+    let propsObj = {};
+
     if (customStyleFn) {
-      const newStyles = customStyleFn(styleSet, block);
+      const {props, ...newStyles} = customStyleFn(styleSet, block);
       styleObj = Object.assign(styleObj, newStyles);
+      propsObj = props || {};
     }
 
     return (
       <span
+        {...propsObj}
         data-offset-key={offsetKey}
         ref={ref => (this.leaf = ref)}
         style={styleObj}>
