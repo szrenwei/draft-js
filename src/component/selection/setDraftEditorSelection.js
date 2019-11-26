@@ -294,7 +294,7 @@ function addFocusToSelection(
       });
       // allow the error to be thrown -
       // better than continuing in a broken state
-      throw e;
+      // throw e;
     }
   } else {
     // IE doesn't support extend. This will mean no backward selection.
