@@ -102,7 +102,8 @@ const splitBlockInContentState = (
     const blockType = blockToSplit.getType();
     if (
       blockType === 'unordered-list-item' ||
-      blockType === 'ordered-list-item'
+      blockType === 'ordered-list-item' ||
+      blockType === 'todo'
     ) {
       return modifyBlockForContentState(contentState, selectionState, block =>
         block.merge({type: 'unstyled', depth: 0}),
