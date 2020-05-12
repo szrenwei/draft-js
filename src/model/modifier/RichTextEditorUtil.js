@@ -204,7 +204,11 @@ const RichTextEditorUtil: RichTextUtils = {
     const content = editorState.getCurrentContent();
     const block = content.getBlockForKey(key);
     const type = block.getType();
-    if (type !== 'unordered-list-item' && type !== 'ordered-list-item') {
+    if (
+      type !== 'unordered-list-item' &&
+      type !== 'ordered-list-item' &&
+      type !== 'todo'
+    ) {
       return editorState;
     }
 

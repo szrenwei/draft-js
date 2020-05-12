@@ -206,6 +206,7 @@ function insertFragment(
     editorState.getCurrentContent(),
     editorState.getSelection(),
     fragment,
+    'MERGE_OLD_DATA_TO_NEW_DATA',
   );
   // TODO: merge the entity map once we stop using DraftEntity
   // like this:
