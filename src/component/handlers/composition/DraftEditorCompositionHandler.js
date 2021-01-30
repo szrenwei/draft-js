@@ -23,6 +23,8 @@ const Keys = require('Keys');
 const getEntityKeyForSelection = require('getEntityKeyForSelection');
 // const isEventHandled = require('isEventHandled');
 const isSelectionAtLeafStart = require('isSelectionAtLeafStart');
+const getContentEditableContainer = require('getContentEditableContainer');
+const getDraftEditorSelection = require('getDraftEditorSelection');
 
 /**
  * Millisecond delay to allow `compositionstart` to fire again upon
@@ -145,15 +147,20 @@ var DraftEditorCompositionHandler = {
 
     const currentStyle = editorState.getCurrentInlineStyle();
     const entityKey = getEntityKeyForSelection(
-        editorState.getCurrentContent(),
-        editorState.getSelection(),
+      editorState.getCurrentContent(),
+      editorState.getSelection(),
     );
+    // https://github.com/facebook/draft-js/blob/master/src/component/handlers/composition/DraftEditorCompositionHandler.js#L236
+    const compositionEndSelectionState = getDraftEditorSelection(
+      editorState,
+      getContentEditableContainer(editor),
+    ).selectionState;
 
     const mustReset =
-        !composedChars ||
-        isSelectionAtLeafStart(editorState) ||
-        currentStyle.size > 0 ||
-        entityKey !== null;
+      !composedChars ||
+      isSelectionAtLeafStart(editorState) ||
+      currentStyle.size > 0 ||
+      entityKey !== null;
 
     if (mustReset) {
       editor.restoreEditorDOM();
@@ -174,24 +181,25 @@ var DraftEditorCompositionHandler = {
       // If characters have been composed, re-rendering with the update
       // is sufficient to reset the editor.
       const contentState = DraftModifier.replaceText(
-          editorState.getCurrentContent(),
-          editorState.getSelection(),
-          composedChars,
-          currentStyle,
-          entityKey,
+        editorState.getCurrentContent(),
+        editorState.getSelection(),
+        composedChars,
+        currentStyle,
+        entityKey,
       );
       editor.update(
-          EditorState.push(editorState, contentState, 'insert-characters'),
+        EditorState.push(editorState, contentState, 'insert-characters'),
       );
       return;
     }
 
     if (mustReset) {
       editor.update(
-          EditorState.set(editorState, {
-            nativelyRenderedContent: null,
-            forceSelection: true,
-          }),
+        EditorState.set(editorState, {
+          nativelyRenderedContent: null,
+          forceSelection: compositionEndSelectionState.getHasFocus(),
+          selection: compositionEndSelectionState,
+        }),
       );
     }
   },
