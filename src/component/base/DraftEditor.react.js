@@ -51,7 +51,10 @@ const allowSpellCheck = !isIE;
 // of editor behavior.
 const handlerMap = {
   edit: DraftEditorEditHandler,
-  composite: DraftEditorCompositionHandler,
+  composite: {
+    ...DraftEditorCompositionHandler,
+    onBlur: DraftEditorEditHandler.onBlur, // blur should be handled in composition mode
+  },
   drag: DraftEditorDragHandler,
   cut: null,
   render: null,
@@ -581,7 +584,10 @@ class DraftEditor extends React.Component<DraftEditorProps, State> {
     scrollPosition?: DraftScrollPosition,
   ): void => {
     this.setState({contentsKey: this.state.contentsKey + 1}, () => {
-      this.focus(scrollPosition);
+      // only trigger focus() when selection has focus
+      if (this._latestEditorState.getSelection().getHasFocus()) {
+        this.focus(scrollPosition);
+      }
     });
   };
 
