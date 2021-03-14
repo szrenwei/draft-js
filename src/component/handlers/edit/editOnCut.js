@@ -20,6 +20,7 @@ const Style = require('Style');
 const getFragmentFromSelection = require('getFragmentFromSelection');
 const getScrollPosition = require('getScrollPosition');
 const isNode = require('isInstanceOfNode');
+const isEventHandled = require('isEventHandled');
 
 /**
  * On `cut` events, native behavior is allowed to occur so that the system
@@ -35,6 +36,13 @@ function editOnCut(editor: DraftEditor, e: SyntheticClipboardEvent<>): void {
   const selection = editorState.getSelection();
   const element = e.target;
   let scrollPosition;
+
+  if (
+    editor.props.handleCut &&
+    isEventHandled(editor.props.handleCut(e, editorState))
+  ) {
+    return;
+  }
 
   // No selection, so there's nothing to cut.
   if (selection.isCollapsed()) {

@@ -14,6 +14,7 @@
 import type DraftEditor from 'DraftEditor.react';
 
 const getFragmentFromSelection = require('getFragmentFromSelection');
+const isEventHandled = require('isEventHandled');
 
 /**
  * If we have a selection, create a ContentState fragment and store
@@ -23,6 +24,13 @@ const getFragmentFromSelection = require('getFragmentFromSelection');
 function editOnCopy(editor: DraftEditor, e: SyntheticClipboardEvent<>): void {
   const editorState = editor._latestEditorState;
   const selection = editorState.getSelection();
+
+  if (
+    editor.props.handleCopy &&
+    isEventHandled(editor.props.handleCopy(e, editorState))
+  ) {
+    return;
+  }
 
   // No selection, so there's nothing to copy.
   if (selection.isCollapsed()) {
