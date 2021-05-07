@@ -22,7 +22,7 @@ const Keys = require('Keys');
 
 const getEntityKeyForSelection = require('getEntityKeyForSelection');
 // const isEventHandled = require('isEventHandled');
-const isSelectionAtLeafStart = require('isSelectionAtLeafStart');
+// const isSelectionAtLeafStart = require('isSelectionAtLeafStart');
 const getContentEditableContainer = require('getContentEditableContainer');
 const getDraftEditorSelection = require('getDraftEditorSelection');
 
@@ -156,16 +156,7 @@ var DraftEditorCompositionHandler = {
       getContentEditableContainer(editor),
     ).selectionState;
 
-    const mustReset =
-      !composedChars ||
-      isSelectionAtLeafStart(editorState) ||
-      currentStyle.size > 0 ||
-      entityKey !== null;
-
-    if (mustReset) {
-      editor.restoreEditorDOM();
-    }
-
+    editor.restoreEditorDOM();
     editor.exitCurrentMode();
 
     if (composedChars) {
@@ -190,10 +181,7 @@ var DraftEditorCompositionHandler = {
       editor.update(
         EditorState.push(editorState, contentState, 'insert-characters'),
       );
-      return;
-    }
-
-    if (mustReset) {
+    } else {
       editor.update(
         EditorState.set(editorState, {
           nativelyRenderedContent: null,
